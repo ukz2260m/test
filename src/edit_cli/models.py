@@ -64,6 +64,27 @@ class PlayerCountSample(BaseModel):
     confidence: float
 
 
+class KillCountSample(BaseModel):
+    """Own elimination counter (distinct from ``killfeed``, which logs
+    eliminations by anyone visible in the killfeed, not just the player)."""
+
+    t: float
+    count: int
+    confidence: float
+
+
+StormPhase = Literal["safe", "zone_countdown", "closing", "in_storm"]
+
+
+class StormStatusEvent(BaseModel):
+    """Zone/storm state. ``"in_storm"`` entries are what
+    ``score.combat_score`` uses to suppress HP-loss false positives."""
+
+    t: float
+    phase: StormPhase
+    confidence: float
+
+
 class BuildEditUiEvent(BaseModel):
     t: float
     state: str
@@ -75,6 +96,8 @@ class VisionEvents(BaseModel):
     damage_popups: list[DamagePopupEvent] = []
     killfeed: list[KillfeedEvent] = []
     player_count: list[PlayerCountSample] = []
+    kill_count: list[KillCountSample] = []
+    storm_status: list[StormStatusEvent] = []
     build_edit_ui: list[BuildEditUiEvent] = []
 
 

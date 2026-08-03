@@ -30,7 +30,10 @@ resolutions:
       shield_bar:         [0.36, 0.955, 0.28, 0.015]
       damage_popup:       [0.30, 0.35, 0.40, 0.30]  # center-screen, where damage numbers float
       killfeed:           [0.70, 0.05, 0.29, 0.20]  # top-right
-      player_count:       [0.90, 0.01, 0.09, 0.04]  # top-right corner counter
+      player_count:       [0.90, 0.01, 0.09, 0.04]  # top-right corner counter (remaining players)
+      kill_count:         [0.44, 0.90, 0.06, 0.03]  # own elimination counter, near HP bar
+      storm_timer:        [0.44, 0.02, 0.12, 0.04]  # top-center zone countdown text
+      storm_warning:      [0.00, 0.00, 1.00, 1.00]  # full-frame - screen-edge storm damage vignette detection
       build_edit_ui:      [0.78, 0.70, 0.22, 0.30]  # build/edit piece selector, bottom-right
 
   "2560x1440":
@@ -42,6 +45,9 @@ resolutions:
       damage_popup:        [0.30, 0.35, 0.40, 0.30]
       killfeed:            [0.70, 0.05, 0.29, 0.20]
       player_count:        [0.90, 0.01, 0.09, 0.04]
+      kill_count:          [0.44, 0.90, 0.06, 0.03]
+      storm_timer:         [0.44, 0.02, 0.12, 0.04]
+      storm_warning:       [0.00, 0.00, 1.00, 1.00]
       build_edit_ui:       [0.78, 0.70, 0.22, 0.30]
 
 # NOTE: the fractional values above are PLACEHOLDERS to be measured against

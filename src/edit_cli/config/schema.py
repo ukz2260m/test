@@ -73,6 +73,7 @@ class CombatScoreConfig(BaseModel):
     weights: CombatScoreWeights
     normalization: CombatScoreNormalization
     combat_threshold: float
+    storm_damage_suppression_factor: float
 
 
 class SegmentBuilderConfig(BaseModel):
@@ -137,6 +138,12 @@ class VisionDetectionConfig(BaseModel):
     template_match_min_confidence: float
 
 
+class StormDetectionConfig(BaseModel):
+    timer_ocr_min_confidence: float
+    vignette_purple_area_ratio_threshold: float
+    vignette_min_gap_seconds: float
+
+
 class ThresholdsConfig(BaseModel):
     schema_version: int
     combat_score: CombatScoreConfig
@@ -146,6 +153,7 @@ class ThresholdsConfig(BaseModel):
     vad: VadConfig
     filler: FillerConfig
     vision_detection: VisionDetectionConfig
+    storm_detection: StormDetectionConfig
 
 
 # --------------------------------------------------------------------------

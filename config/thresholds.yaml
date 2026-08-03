@@ -19,6 +19,7 @@ combat_score:
       damage_popup: 2.0
       killfeed_appear: 2.5
       player_count_drop: 1.0
+      kill_count_increase: 3.0  # own elimination - as strong a signal as taking damage
       build_edit_ui_change: 1.0
     audio:
       gunshot_onset_density: 2.0
@@ -35,6 +36,13 @@ combat_score:
     sigmoid_k: 1.5              # steepness
 
   combat_threshold: 0.35        # score >= this => "in combat" for that second
+
+  # A confirmed storm-damage tick (storm.storm_warning signal) at bucket t
+  # multiplies the hp_shield_delta AND hit_sound contributions at that bucket
+  # by this factor before weighting, so storm damage while walking through
+  # the circle isn't misread as combat. 1.0 = no suppression, 0.0 = fully
+  # exclude those two signals whenever storm damage is detected.
+  storm_damage_suppression_factor: 0.15
 
 segment_builder:
   pre_margin_seconds: 2.0        # keep this much before a combat segment starts
@@ -84,5 +92,13 @@ vision_detection:
   detail_window_seconds: 1.5      # window around a coarse-pass event to re-analyze at detail_fps
   hp_bar_change_threshold: 0.03   # fractional bar-length delta to count as "changed"
   shield_bar_change_threshold: 0.03
-  ocr_min_confidence: 0.5
+  ocr_min_confidence: 0.5         # EasyOCR confidence floor for digit/text ROIs (killfeed, counters, timer)
   template_match_min_confidence: 0.6
+
+storm_detection:
+  # storm_timer: OCR'd "MM:SS" countdown text in the storm_timer ROI.
+  timer_ocr_min_confidence: 0.5
+  # storm_warning: full-frame purple damage-vignette detection (color-mask
+  # area ratio in HSV purple range against a rolling per-video baseline).
+  vignette_purple_area_ratio_threshold: 0.08
+  vignette_min_gap_seconds: 0.9    # storm damage ticks at a fixed game interval; de-dupe within this gap

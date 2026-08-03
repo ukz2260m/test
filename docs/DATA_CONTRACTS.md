@@ -42,6 +42,8 @@ again. Backed by `edit_cli.models.AnalysisResult` (pydantic).
     "damage_popups": [ { "t": 12.5, "roi": "damage_popup", "confidence": 0.77 } ],
     "killfeed": [ { "t": 45.0, "text": "PlayerX eliminated PlayerY", "confidence": 0.85 } ],
     "player_count": [ { "t": 0.0, "count": 72, "confidence": 0.95 } ],
+    "kill_count": [ { "t": 45.1, "count": 3, "confidence": 0.9 } ],   // own eliminations, distinct from killfeed
+    "storm_status": [ { "t": 120.0, "phase": "in_storm", "confidence": 0.7 } ], // safe | zone_countdown | closing | in_storm
     "build_edit_ui": [ { "t": 30.1, "state": "editing", "confidence": 0.80 } ]
   },
   "audio_events": {

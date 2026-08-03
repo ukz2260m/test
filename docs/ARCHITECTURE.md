@@ -28,8 +28,10 @@ edit-cli/
     vision/
       roi_calibration.py       # template-match calibration -> absolute ROI pixel boxes per video
       hud_reader.py             # HP/shield bar reading + damage popup detection
-      killfeed.py                # killfeed OCR/detection
-      player_count.py            # remaining-player-count OCR
+      killfeed.py                # killfeed OCR/detection (EasyOCR)
+      player_count.py            # remaining-player-count OCR (EasyOCR)
+      kill_count.py               # own elimination counter OCR (EasyOCR)
+      storm_status.py             # zone-timer OCR + storm-damage vignette detection
       build_edit_ui.py           # build/edit UI state-change detection
     audio/
       vad.py                     # voice activity detection -> speech spans
@@ -69,7 +71,8 @@ analyze:
   ingest.probe          -> VideoMeta (resolution, fps, duration)
   ingest.ffmpeg_ops      -> extracted audio (wav) + sampled frames (5fps, +detail passes near events)
   vision.roi_calibration -> per-video absolute ROI boxes (from rois.yaml template match)
-  vision.*                -> vision_events
+  vision.*                -> vision_events (hp/shield, damage popups, killfeed, player_count,
+                             kill_count, storm_status, build_edit_ui)
   audio.vad + audio.events + audio.features -> speech.vad_segments, audio_events, commentary_features
   transcribe.whisper_runner -> speech.words (word-level, glossary-biased)
   transcribe.glossary        -> corrected_word per word (corrections.yaml)
@@ -78,7 +81,9 @@ analyze:
 
 export:
   models.AnalysisResult (load + validate analysis.json)
-  score.combat_score      -> combat_score_timeline (thresholds.yaml weights)
+  score.combat_score      -> combat_score_timeline (thresholds.yaml weights; kill_count weighted
+                             like HP/shield loss; storm_status "in_storm" buckets suppress
+                             hp_shield_delta/hit_sound contributions instead of counting as combat)
   score.segment_builder    -> combat_segments (margins + merge)
   score.keep_cut_decision   -> kept_segments / cut_segments (never mid-speech; drops class-A fillers; keeps class-B)
   => models.DecisionResult
@@ -105,3 +110,7 @@ export:
 5. **Each module is independently runnable/testable** — no module reaches
    into another module's internals; they only exchange the pydantic models
    in `models.py`.
+6. **OCR engine: EasyOCR** for all text/digit ROIs (killfeed, player_count,
+   kill_count, storm_timer). HP/shield bars are NOT OCR'd — they're read as
+   bar-fill-length (pixel/color measurement), which is faster and more
+   robust than reading numbers off a bar even if the HUD displays them.

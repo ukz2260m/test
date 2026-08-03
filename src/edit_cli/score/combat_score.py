@@ -28,5 +28,15 @@ def compute_combat_score_timeline(
     this function applies whatever weights it's given without an implicit
     single-signal override (spec: "単一シグナルに依存しないこと" is a
     config/weighting discipline, not a hardcoded rule here).
+
+    ``vision_events.kill_count`` increases are weighted like HP/shield loss
+    (``weights.vision.kill_count_increase``) — the player's own elimination
+    is as strong a combat signal as taking damage.
+
+    ``vision_events.storm_status`` is NOT itself weighted into the sum; it's
+    read to find buckets overlapping a ``"in_storm"`` phase and multiply
+    THOSE buckets' ``hp_shield_delta`` and ``hit_sound`` raw contributions by
+    ``config.storm_damage_suppression_factor`` before weighting, so storm
+    damage taken while rotating isn't misread as a firefight.
     """
     raise NotImplementedError
