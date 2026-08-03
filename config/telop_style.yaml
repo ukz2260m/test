@@ -1,0 +1,45 @@
+# config/telop_style.yaml
+#
+# ASS subtitle styles. `normal` is used for class:A-surviving / non-flagged
+# words (i.e. everything not classified as a reaction). `emphasis` is applied
+# to spans where any word in the span has filler_analysis.class == "B".
+# export/ass_export.py reads this file directly; no style is hardcoded there.
+
+schema_version: 1
+
+emphasis:
+  enabled: true    # global on/off switch for reaction emphasis styling
+
+styles:
+  normal:
+    fontname: "Noto Sans JP Bold"
+    fontsize: 64
+    primary_colour: "&H00FFFFFF"     # ASS BGR+alpha: white
+    outline_colour: "&H00000000"     # black outline
+    back_colour: "&H64000000"        # semi-transparent shadow box
+    bold: -1                          # ASS bool: -1 = true
+    italic: 0
+    outline: 3
+    shadow: 1
+    alignment: 2                      # bottom-center (numpad layout)
+    margin_l: 80
+    margin_r: 80
+    margin_v: 60
+
+  emphasis:
+    fontname: "Noto Sans JP Bold"
+    fontsize: 88                      # larger for reactions
+    primary_colour: "&H0000D7FF"      # gold/orange
+    outline_colour: "&H00002040"      # dark reinforced outline
+    back_colour: "&H64000000"
+    bold: -1
+    italic: 0
+    outline: 5                        # heavier outline
+    shadow: 2
+    alignment: 2
+    margin_l: 80
+    margin_r: 80
+    margin_v: 60
+    # extra ASS override tags appended inline to the emphasized span, applied
+    # on top of the base style above (e.g. a pop scale-in animation).
+    extra_override_tags: "\\t(0,120,\\fscx115\\fscy115)\\t(120,240,\\fscx100\\fscy100)"

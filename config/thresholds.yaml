@@ -1,0 +1,88 @@
+# config/thresholds.yaml
+#
+# All magic numbers for combat-score computation and keep/cut decisions live
+# here. Nothing in src/ should hardcode a threshold or weight.
+#
+# Combat score is computed per-second (1.0s buckets) in [0, 1] after
+# per-signal normalization, as a weighted sum. Weights need not sum to 1;
+# `score.combat_score` normalizes the final score into [0, 1] via clamp.
+
+schema_version: 1
+
+combat_score:
+  window_seconds: 1.0          # bucket size for the per-second score timeline
+  smoothing_seconds: 1.0        # rolling average applied after raw weighting
+
+  weights:
+    vision:
+      hp_shield_delta: 3.0      # took/dealt damage - strongest single visual signal
+      damage_popup: 2.0
+      killfeed_appear: 2.5
+      player_count_drop: 1.0
+      build_edit_ui_change: 1.0
+    audio:
+      gunshot_onset_density: 2.0
+      elim_sound: 2.5
+      build_sound: 0.75
+      hit_sound: 2.0
+    commentary:
+      volume_spike: 1.0
+      pitch_spike: 1.0
+
+  normalization:
+    # per-signal raw -> [0,1] mapping method: "minmax" | "sigmoid" | "fixed_scale"
+    method: sigmoid
+    sigmoid_k: 1.5              # steepness
+
+  combat_threshold: 0.35        # score >= this => "in combat" for that second
+
+segment_builder:
+  pre_margin_seconds: 2.0        # keep this much before a combat segment starts
+  post_margin_seconds: 3.0       # keep this much after a combat segment ends
+  merge_gap_seconds: 5.0         # merge two combat segments if gap between them < this
+
+keep_cut_decision:
+  min_cut_silence_seconds: 1.5   # cut only if silence AND non-combat for >= this long
+  # cut points must never fall inside a VAD speech span or inside a word span;
+  # keep_cut_decision snaps cut boundaries outward to the nearest safe gap.
+  cut_point_safety_margin_seconds: 0.05
+
+audio_events:
+  gunshot_onset:
+    band_hz: [1500, 6000]
+    onset_sensitivity: 0.5
+    min_gap_seconds: 0.05
+  elim_sound:
+    match_threshold: 0.6         # cross-correlation / classifier confidence threshold
+  build_sound:
+    match_threshold: 0.55
+  hit_sound:
+    match_threshold: 0.55
+  commentary:
+    volume_spike_ratio: 1.6      # rms vs rolling baseline
+    pitch_spike_ratio: 1.3       # f0 vs rolling baseline
+
+vad:
+  aggressiveness: 2              # 0-3, passed to VAD backend
+  min_speech_seconds: 0.2
+  min_silence_seconds: 0.2
+  speech_pad_seconds: 0.15       # padding added to each VAD speech span before use
+
+filler:
+  enabled: true
+  reaction_gap_threshold: 0.3     # silence before word >= this => treat as independent utterance (class B candidate)
+  pitch_rise_threshold: 1.15      # word F0 mean / preceding-window F0 mean >= this => pitch "rise"
+  volume_spike_ratio: 1.3         # word RMS / preceding-window RMS >= this => volume "spike"
+  combat_score_bias_threshold: 0.35  # if combat score at word time >= this, biases toward class B
+  ambiguous_action: keep          # keep | remove - tie-break when signals conflict (spec: prefer keep)
+  filler_words: [えー, あー, えっと, なんか, まあ, その]
+  reaction_words: [え, は, うわ, やば, ちょ, まって, おい]
+
+vision_detection:
+  sample_fps: 5.0                 # coarse frame sampling rate
+  detail_fps: 15.0                # fine-grained re-analysis rate near a detected event
+  detail_window_seconds: 1.5      # window around a coarse-pass event to re-analyze at detail_fps
+  hp_bar_change_threshold: 0.03   # fractional bar-length delta to count as "changed"
+  shield_bar_change_threshold: 0.03
+  ocr_min_confidence: 0.5
+  template_match_min_confidence: 0.6

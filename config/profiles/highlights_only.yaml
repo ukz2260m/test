@@ -1,0 +1,18 @@
+# config/profiles/highlights_only.yaml
+#
+# Example non-trivial profile: cuts more aggressively, keeping only clearer
+# combat. Demonstrates the override-merge schema - deep-merged onto the base
+# config/thresholds.yaml at load time.
+
+schema_version: 1
+extends: default
+
+overrides:
+  thresholds:
+    combat_score:
+      combat_threshold: 0.5      # stricter than base 0.35
+    segment_builder:
+      pre_margin_seconds: 1.5
+      post_margin_seconds: 2.0
+    keep_cut_decision:
+      min_cut_silence_seconds: 1.0

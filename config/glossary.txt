@@ -1,0 +1,43 @@
+# config/glossary.txt
+#
+# Fortnite terminology, one term per line. Injected verbatim (comma-joined)
+# into Whisper's `initial_prompt` to bias decoding toward these terms.
+# Lines starting with # are comments and blank lines are ignored.
+# Edit freely; no code changes required.
+
+建築
+編集
+ポンプ
+AR
+アサルトライフル
+シールドポーション
+ミニシールド
+ストーム
+ゼロビルド
+バトルロイヤル
+リロード
+リコイル
+エイム
+ヘッショ
+ヘッドショット
+ダウン
+ノックダウン
+リバイブ
+squad
+デュオ
+ソロ
+ロビー
+ランディング
+サプライ
+ボックス
+チェスト
+ラマ
+ヴォールト
+ポータルストーム
+セーフゾーン
+サープラス
+ハイグラ
+ボロタン
+バレル
+戦績
+キルレ

@@ -1,0 +1,49 @@
+# config/corrections.yaml
+#
+# Post-processing replacement rules applied to Whisper's raw transcript to fix
+# recurring mis-transcriptions of Fortnite terms. Applied word-window-aware
+# (not naive global string replace) so timestamps of replaced spans are kept
+# by proportionally re-splitting the original word timings across the
+# replacement tokens. See transcribe/glossary.py:apply_corrections().
+#
+# Each rule:
+#   pattern: regex (matched against a normalized/lowered reading) OR plain
+#            substring - `type` selects which.
+#   replacement: literal replacement text.
+#   type: "literal" | "regex"
+#   word_boundary: if true, only match on whole-word boundaries.
+
+schema_version: 1
+
+rules:
+  - type: literal
+    pattern: "建設"
+    replacement: "建築"
+    word_boundary: true
+  - type: literal
+    pattern: "編修"
+    replacement: "編集"
+    word_boundary: true
+  - type: literal
+    pattern: "ぽんぷ"
+    replacement: "ポンプ"
+    word_boundary: true
+  - type: literal
+    pattern: "エーアール"
+    replacement: "AR"
+    word_boundary: true
+  - type: literal
+    pattern: "シールドポーション"  # placeholder identity rule; extend with real
+    replacement: "シールドポーション"  # observed misreadings once samples exist
+    word_boundary: true
+  - type: literal
+    pattern: "ストーン"
+    replacement: "ストーム"
+    word_boundary: true
+  - type: literal
+    pattern: "ゼロビルド"
+    replacement: "ゼロビルド"
+    word_boundary: true
+
+# NOTE: this rule set is a starter skeleton establishing the schema. It should
+# be expanded once real transcripts reveal actual mis-transcription patterns.

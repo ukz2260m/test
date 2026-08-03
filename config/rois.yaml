@@ -1,0 +1,49 @@
+# config/rois.yaml
+#
+# HUD ROI (Region of Interest) definitions, per source resolution.
+# Coordinates are FRACTIONAL (0.0-1.0, origin top-left) so they scale with any
+# resolution that shares the same aspect ratio / HUD layout as the profile below.
+# The `vision.roi_calibration` module uses `calibration_template` as a
+# template-matching anchor at startup to correct for HUD-scale/position options
+# and minor letterboxing before deriving absolute pixel ROIs. Coordinates here
+# are NEVER read as hardcoded pixels anywhere else in the codebase.
+#
+# Schema per resolution key ("<width>x<height>"):
+#   calibration_template: path to a small reference PNG (relative to this file)
+#                          used as the template-match anchor (e.g. the minimap
+#                          frame corner, a fixed HUD icon).
+#   anchor_search_region: fractional [x, y, w, h] box to restrict template
+#                          search (perf + avoids false matches).
+#   regions: named fractional [x, y, w, h] boxes, relative to the FULL FRAME,
+#            recomputed at runtime relative to the matched anchor offset.
+#
+# Add a new resolution block to support a new capture size. Do not edit code.
+
+schema_version: 1
+
+resolutions:
+  "1920x1080":
+    calibration_template: templates/1080p_hud_anchor.png
+    anchor_search_region: [0.0, 0.0, 0.25, 0.25]   # minimap corner, top-left quadrant
+    regions:
+      hp_bar:            [0.36, 0.93, 0.28, 0.02]
+      shield_bar:         [0.36, 0.955, 0.28, 0.015]
+      damage_popup:       [0.30, 0.35, 0.40, 0.30]  # center-screen, where damage numbers float
+      killfeed:           [0.70, 0.05, 0.29, 0.20]  # top-right
+      player_count:       [0.90, 0.01, 0.09, 0.04]  # top-right corner counter
+      build_edit_ui:      [0.78, 0.70, 0.22, 0.30]  # build/edit piece selector, bottom-right
+
+  "2560x1440":
+    calibration_template: templates/1440p_hud_anchor.png
+    anchor_search_region: [0.0, 0.0, 0.25, 0.25]
+    regions:
+      hp_bar:             [0.36, 0.93, 0.28, 0.02]
+      shield_bar:          [0.36, 0.955, 0.28, 0.015]
+      damage_popup:        [0.30, 0.35, 0.40, 0.30]
+      killfeed:            [0.70, 0.05, 0.29, 0.20]
+      player_count:        [0.90, 0.01, 0.09, 0.04]
+      build_edit_ui:       [0.78, 0.70, 0.22, 0.30]
+
+# NOTE: the fractional values above are PLACEHOLDERS to be measured against
+# real capture samples during vision module implementation (step 1). They
+# define the config *shape*, not the final calibrated numbers.

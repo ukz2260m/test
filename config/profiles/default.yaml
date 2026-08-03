@@ -1,0 +1,19 @@
+# config/profiles/default.yaml
+#
+# A profile is a partial-override document, deep-merged on top of the base
+# config/*.yaml files at load time (see config/loader.py:load_config).
+# Selected via `--profile <name>` (looks up config/profiles/<name>.yaml).
+# Omit any key you don't want to override - only present keys are merged.
+#
+# The "default" profile intentionally overrides nothing; it exists so
+# `--profile default` and omitting --profile behave identically, and to
+# document the override schema by example (see highlights_only.yaml for a
+# non-trivial override).
+
+schema_version: 1
+extends: null   # a profile may itself extend another profile by name
+
+overrides:
+  thresholds: {}
+  rois: {}
+  telop_style: {}
