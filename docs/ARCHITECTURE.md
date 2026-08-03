@@ -33,6 +33,7 @@ edit-cli/
       kill_count.py               # own elimination counter OCR (EasyOCR)
       storm_status.py             # zone-timer OCR + storm-damage vignette detection
       build_edit_ui.py           # build/edit UI state-change detection
+      facecam_calibration.py     # interactive (cv2.selectROI) facecam-mask picker - one still frame, no playback
     audio/
       vad.py                     # voice activity detection -> speech spans
       events.py                   # gunshot/elim/build/hit acoustic event detection
@@ -123,4 +124,9 @@ export:
    `analyze --facecam-mask x,y,w,h` records a fractional exclusion box in
    `AnalysisResult.meta.facecam_mask`; every vision.* reader checks
    `roi_calibration.is_occluded` against it before trusting a read, emitting
-   confidence 0 instead of OCR/color noise from someone's face.
+   confidence 0 instead of OCR/color noise from someone's face. Since every
+   streamer's overlay sits somewhere different (and some are chroma-keyed
+   cutouts, not solid rectangles), there's no default position — run
+   `edit-cli calibrate-facecam <video>` once per recording setup to pick it
+   interactively (single still frame, local window, no video playback) and
+   reuse the printed value.

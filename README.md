@@ -16,9 +16,10 @@ and pipeline, and [`docs/DATA_CONTRACTS.md`](docs/DATA_CONTRACTS.md) for the
 ## CLI
 
 ```
-edit-cli analyze <input.mp4> [--config config/] [--profile default] [--dry-run]
+edit-cli analyze <input.mp4> [--config config/] [--profile default] [--dry-run] [--facecam-mask x,y,w,h]
 edit-cli export <analysis.json> [--config config/] [--profile default] [--dry-run]
-edit-cli run <input.mp4> [--config config/] [--profile default] [--dry-run]
+edit-cli run <input.mp4> [--config config/] [--profile default] [--dry-run] [--facecam-mask x,y,w,h]
+edit-cli calibrate-facecam <input.mp4>   # interactively pick --facecam-mask by dragging a box on one frame
 ```
 
 `analyze` and `export` are separate on purpose: re-tuning `config/thresholds.yaml`

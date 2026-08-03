@@ -87,6 +87,21 @@ def analyze(
     raise NotImplementedError
 
 
+@main.command(name="calibrate-facecam")
+@click.argument("input_path", type=click.Path(exists=True, path_type=Path))
+@click.option("--frame-time", type=float, default=30.0, show_default=True, help="Seconds into the video to grab the reference frame from.")
+@click.option("--out", "out_path", type=click.Path(path_type=Path), default=None, help="Also write the resulting x,y,w,h to this file (one line, comma-separated).")
+def calibrate_facecam(input_path: Path, frame_time: float, out_path: Path | None) -> None:
+    """Interactively pick the facecam-overlay rectangle from one frame of INPUT_PATH.
+
+    Opens a local window on a single extracted frame (no playback). Drag a
+    box over the webcam overlay and press ENTER/SPACE to confirm, or Esc if
+    there's no overlay to mask. Prints the resulting value to reuse as
+    `--facecam-mask` on `analyze`/`run`.
+    """
+    raise NotImplementedError
+
+
 @main.command(name="export")
 @click.argument("analysis_path", type=click.Path(exists=True, path_type=Path))
 @_common_options
