@@ -26,6 +26,7 @@ def read_kill_count(
 
     Same monotonic-guard as player_count, inverted: a reading that DECREASES
     from the previous one is an OCR misread (this counter never decreases
-    within a match) and is discarded rather than emitted.
+    within a match) and is discarded rather than emitted. Same
+    ``rois.facecam_mask`` occlusion handling as player_count.
     """
     raise NotImplementedError

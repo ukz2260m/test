@@ -35,7 +35,8 @@ again. Backed by `edit_cli.models.AnalysisResult` (pydantic).
     "duration_seconds": 612.35,
     "analyzed_at": "2026-08-03T09:00:00Z",
     "tool_version": "0.1.0",
-    "config_fingerprint": "…"   // hash of rois.yaml + glossary.txt used, for cache validation
+    "config_fingerprint": "…",   // hash of rois.yaml + glossary.txt used, for cache validation
+    "facecam_mask": null          // fractional [x,y,w,h] from `analyze --facecam-mask`, or null
   },
   "vision_events": {
     "hp_shield": [ { "t": 12.4, "hp": 0.62, "shield": 0.10, "delta_hp": -0.18, "delta_shield": 0.0, "confidence": 0.91 } ],

@@ -114,3 +114,13 @@ export:
    kill_count, storm_timer). HP/shield bars are NOT OCR'd — they're read as
    bar-fill-length (pixel/color measurement), which is faster and more
    robust than reading numbers off a bar even if the HUD displays them.
+7. **Shield and health share one ROI (`vitals_bar`), split by color, not
+   position.** Measured against real footage, they're two contiguous bars
+   with no fixed boundary — a hardcoded split fraction would break on any
+   HUD color customization. `hud_reader` classifies pixels by hue instead
+   (`thresholds.yaml: vision_detection.shield_hue_range` / `health_hue_range`).
+8. **Streamer webcam overlays are a first-class concern, not an edge case.**
+   `analyze --facecam-mask x,y,w,h` records a fractional exclusion box in
+   `AnalysisResult.meta.facecam_mask`; every vision.* reader checks
+   `roi_calibration.is_occluded` against it before trusting a read, emitting
+   confidence 0 instead of OCR/color noise from someone's face.

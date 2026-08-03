@@ -46,12 +46,43 @@ def _common_options(f):
     return f
 
 
+def _parse_facecam_mask(ctx, param, value: str | None) -> tuple[float, float, float, float] | None:
+    if value is None:
+        return None
+    try:
+        x, y, w, h = (float(v) for v in value.split(","))
+    except ValueError as exc:
+        raise click.BadParameter("expected 4 comma-separated fractions: x,y,w,h (each in [0,1])") from exc
+    if not all(0.0 <= v <= 1.0 for v in (x, y, w, h)):
+        raise click.BadParameter("x,y,w,h must each be within [0,1]")
+    return (x, y, w, h)
+
+
+_FACECAM_MASK_OPTION = click.option(
+    "--facecam-mask",
+    "facecam_mask",
+    default=None,
+    callback=_parse_facecam_mask,
+    metavar="X,Y,W,H",
+    help="Fractional [0,1] webcam-overlay box (e.g. streamer face cam) to exclude from HUD reads, e.g. 0.0,0.75,0.22,0.25.",
+)
+
+
 @main.command()
 @click.argument("input_path", type=click.Path(exists=True, path_type=Path))
 @_common_options
 @click.option("--out", "out_path", type=click.Path(path_type=Path), default=None, help="Output analysis.json path (default: <input>.analysis.json).")
 @click.option("--no-cache", is_flag=True, default=False, help="Force re-analysis even if a cache hit exists.")
-def analyze(input_path: Path, config_dir: Path, profile: str, dry_run: bool, out_path: Path | None, no_cache: bool) -> None:
+@_FACECAM_MASK_OPTION
+def analyze(
+    input_path: Path,
+    config_dir: Path,
+    profile: str,
+    dry_run: bool,
+    out_path: Path | None,
+    no_cache: bool,
+    facecam_mask: tuple[float, float, float, float] | None,
+) -> None:
     """Analyze INPUT_PATH (mp4) and write an intermediate analysis.json. No thresholds are applied here."""
     raise NotImplementedError
 
@@ -72,7 +103,17 @@ def export(analysis_path: Path, config_dir: Path, profile: str, dry_run: bool, o
 @click.option("--out-dir", type=click.Path(path_type=Path), default=None)
 @click.option("--no-cache", is_flag=True, default=False)
 @click.option("--format", "timeline_format", type=click.Choice(["fcp7xml", "edl"]), default="fcp7xml", show_default=True)
-def run(input_path: Path, config_dir: Path, profile: str, dry_run: bool, out_dir: Path | None, no_cache: bool, timeline_format: str) -> None:
+@_FACECAM_MASK_OPTION
+def run(
+    input_path: Path,
+    config_dir: Path,
+    profile: str,
+    dry_run: bool,
+    out_dir: Path | None,
+    no_cache: bool,
+    timeline_format: str,
+    facecam_mask: tuple[float, float, float, float] | None,
+) -> None:
     """analyze + export in one step."""
     raise NotImplementedError
 

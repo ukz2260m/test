@@ -10,46 +10,62 @@
 #
 # Schema per resolution key ("<width>x<height>"):
 #   calibration_template: path to a small reference PNG (relative to this file)
-#                          used as the template-match anchor (e.g. the minimap
-#                          frame corner, a fixed HUD icon).
+#                          used as the template-match anchor.
 #   anchor_search_region: fractional [x, y, w, h] box to restrict template
 #                          search (perf + avoids false matches).
 #   regions: named fractional [x, y, w, h] boxes, relative to the FULL FRAME,
 #            recomputed at runtime relative to the matched anchor offset.
+#   facecam_mask: optional fractional [x, y, w, h] box, null by default.
+#                  Set via `analyze --facecam-mask x,y,w,h` at runtime (NOT
+#                  edited here) when a streamer webcam overlay covers part of
+#                  the HUD; any region overlapping it is read with
+#                  confidence=0 instead of a garbage OCR/color read. See
+#                  vision.roi_calibration.apply_facecam_mask.
 #
 # Add a new resolution block to support a new capture size. Do not edit code.
+#
+# Calibrated 2026-08-03 against real 2560x1440 "Reload" mode footage
+# (config/templates/1440p_hud_anchor.png, cropped from a supplied gameplay
+# screenshot: the fixed pin+settings icon pair just right of the minimap,
+# which is content-invariant unlike the minimap terrain itself). The
+# 1920x1080 block is DERIVED from the same fractions (same HUD scale
+# assumed) and its calibration_template is NOT YET CAPTURED from a real
+# 1080p sample — anchor confidence will simply read low until one is
+# supplied; template-match failure raises vision.roi_calibration.CalibrationError
+# rather than silently trusting uncalibrated fractional coordinates.
 
 schema_version: 1
 
 resolutions:
   "1920x1080":
-    calibration_template: templates/1080p_hud_anchor.png
-    anchor_search_region: [0.0, 0.0, 0.25, 0.25]   # minimap corner, top-left quadrant
+    calibration_template: templates/1080p_hud_anchor.png   # TODO: capture from a real 1080p sample
+    anchor_search_region: [0.85, 0.00, 0.15, 0.08]          # top-right, around the minimap
     regions:
-      hp_bar:            [0.36, 0.93, 0.28, 0.02]
-      shield_bar:         [0.36, 0.955, 0.28, 0.015]
-      damage_popup:       [0.30, 0.35, 0.40, 0.30]  # center-screen, where damage numbers float
-      killfeed:           [0.70, 0.05, 0.29, 0.20]  # top-right
-      player_count:       [0.90, 0.01, 0.09, 0.04]  # top-right corner counter (remaining players)
-      kill_count:         [0.44, 0.90, 0.06, 0.03]  # own elimination counter, near HP bar
-      storm_timer:        [0.44, 0.02, 0.12, 0.04]  # top-center zone countdown text
-      storm_warning:      [0.00, 0.00, 1.00, 1.00]  # full-frame - screen-edge storm damage vignette detection
-      build_edit_ui:      [0.78, 0.70, 0.22, 0.30]  # build/edit piece selector, bottom-right
+      vitals_bar:          [0.005, 0.820, 0.20, 0.055]  # shield+health bars, classified by color (see hud_reader)
+      damage_popup:         [0.30, 0.35, 0.40, 0.30]     # center-screen, where damage numbers float - UNVERIFIED, no combat sample yet
+      killfeed:             [0.70, 0.20, 0.29, 0.20]     # UNVERIFIED - no elimination visible in supplied samples
+      player_count:          [0.815, 0.090, 0.05, 0.028]  # "18" row, top-right stat stack
+      kill_count:            [0.815, 0.028, 0.05, 0.028]  # "0" row (own eliminations), top-right stat stack
+      storm_timer:            [0.795, 0.122, 0.07, 0.028]  # "0:27"-style countdown, top-right stat stack
+      storm_warning:          [0.00, 0.00, 1.00, 1.00]     # full-frame - screen-edge storm damage vignette detection
+      build_edit_ui:           [0.78, 0.70, 0.22, 0.30]     # UNVERIFIED - not building/editing in supplied samples
 
   "2560x1440":
     calibration_template: templates/1440p_hud_anchor.png
-    anchor_search_region: [0.0, 0.0, 0.25, 0.25]
+    anchor_search_region: [0.85, 0.00, 0.15, 0.08]
     regions:
-      hp_bar:             [0.36, 0.93, 0.28, 0.02]
-      shield_bar:          [0.36, 0.955, 0.28, 0.015]
-      damage_popup:        [0.30, 0.35, 0.40, 0.30]
-      killfeed:            [0.70, 0.05, 0.29, 0.20]
-      player_count:        [0.90, 0.01, 0.09, 0.04]
-      kill_count:          [0.44, 0.90, 0.06, 0.03]
-      storm_timer:         [0.44, 0.02, 0.12, 0.04]
-      storm_warning:       [0.00, 0.00, 1.00, 1.00]
-      build_edit_ui:       [0.78, 0.70, 0.22, 0.30]
+      vitals_bar:           [0.005, 0.820, 0.20, 0.055]
+      damage_popup:          [0.30, 0.35, 0.40, 0.30]
+      killfeed:               [0.70, 0.20, 0.29, 0.20]
+      player_count:            [0.815, 0.090, 0.05, 0.028]
+      kill_count:               [0.815, 0.028, 0.05, 0.028]
+      storm_timer:               [0.795, 0.122, 0.07, 0.028]
+      storm_warning:              [0.00, 0.00, 1.00, 1.00]
+      build_edit_ui:               [0.78, 0.70, 0.22, 0.30]
 
-# NOTE: the fractional values above are PLACEHOLDERS to be measured against
-# real capture samples during vision module implementation (step 1). They
-# define the config *shape*, not the final calibrated numbers.
+# Regions marked UNVERIFIED were not visible in the supplied sample images
+# (no kill/edit/combat moment) and are positional best-guesses following
+# standard Fortnite HUD conventions - to be corrected once a sample with
+# those events is available (thresholds.yaml: vision_detection.ocr_min_confidence
+# / template_match_min_confidence will simply read low until then, they will
+# not crash or silently misreport).

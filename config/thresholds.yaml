@@ -92,6 +92,12 @@ vision_detection:
   detail_window_seconds: 1.5      # window around a coarse-pass event to re-analyze at detail_fps
   hp_bar_change_threshold: 0.03   # fractional bar-length delta to count as "changed"
   shield_bar_change_threshold: 0.03
+  # HSV hue ranges (degrees, 0-360) used to classify vitals_bar fill pixels.
+  # Measured against real footage: shield renders cyan/blue, health renders
+  # green-yellow. Re-measure per HUD color-customization profile if needed.
+  shield_hue_range: [170, 220]
+  health_hue_range: [60, 100]
+  min_saturation: 0.35             # below this, a pixel is background/UI-frame, not a bar fill
   ocr_min_confidence: 0.5         # EasyOCR confidence floor for digit/text ROIs (killfeed, counters, timer)
   template_match_min_confidence: 0.6
 

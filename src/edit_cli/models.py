@@ -34,6 +34,7 @@ class VideoMeta(BaseModel):
     analyzed_at: str
     tool_version: str
     config_fingerprint: str
+    facecam_mask: tuple[float, float, float, float] | None = None  # fractional [x,y,w,h], from --facecam-mask
 
 
 class HpShieldSample(BaseModel):

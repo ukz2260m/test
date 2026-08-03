@@ -21,5 +21,9 @@ def read_player_count(
     reading (monotonic non-increasing signal by game design) — an increase
     indicates an OCR misread and is discarded rather than emitted with low
     confidence, since it cannot correspond to a real game event.
+
+    Occlusion by ``rois.facecam_mask`` (see ``roi_calibration.is_occluded``)
+    suppresses emission for that frame entirely, same reasoning as above: an
+    OCR misread from webcam pixels must not be treated as a real drop.
     """
     raise NotImplementedError

@@ -134,6 +134,9 @@ class VisionDetectionConfig(BaseModel):
     detail_window_seconds: float
     hp_bar_change_threshold: float
     shield_bar_change_threshold: float
+    shield_hue_range: tuple[float, float]
+    health_hue_range: tuple[float, float]
+    min_saturation: float
     ocr_min_confidence: float
     template_match_min_confidence: float
 

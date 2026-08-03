@@ -21,5 +21,9 @@ def detect_killfeed(
     sample's OCR'd text via fuzzy match, not raw pixel diff — killfeed
     entries scroll/fade). ``text`` is the raw OCR'd line for audit purposes;
     downstream scoring only uses presence/timing, not content.
+
+    If ``rois.facecam_mask`` occludes the ``killfeed`` region (see
+    ``roi_calibration.is_occluded``), no events are emitted for that frame
+    rather than OCR'ing webcam pixels as text.
     """
     raise NotImplementedError
